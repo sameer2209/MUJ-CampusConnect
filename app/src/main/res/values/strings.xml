@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MUJ_CampusConnect</string>
+    <string name="name">Name</string>
+    <string name="title_activity_student_home">StudentHomeActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_faculty_home">FacultyHomeActivity</string>
 </resources>
