@@ -84,6 +84,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
         }
         if(user.equals("Faculty")) {
+            Intent i = new Intent(this, FacultyHomeActivity.class);
+            startActivity(i);
             //code for sending to faculty home page
             /*
             if (user.equals("Student")) {
