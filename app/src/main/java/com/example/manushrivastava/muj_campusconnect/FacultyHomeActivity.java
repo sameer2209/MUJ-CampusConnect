@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,14 +25,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 
-public class FacultyHomeActivity extends AppCompatActivity {
+public class FacultyHomeActivity extends AppCompatActivity implements Response {
+    DataFetching s;
+    int noofcourses=0;
+    String courseid[]=new String[20];
+    String coursename[]=new String[20];
+    private static final String TAG_RESULTS="result";
+    private static final String TAG_FacultyID = "facultyId";
+    private static final String TAG_COURSEID = "courseId";
+    private static final String TAG_COURSENAME = "courseName";
+    JSONArray peoples = null;
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -53,6 +75,7 @@ public class FacultyHomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faculty_home);
 
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -65,6 +88,9 @@ public class FacultyHomeActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        s=new DataFetching("159101086");
+        s.delegate=this;
+        s.execute("");
 
     }
 
@@ -94,11 +120,13 @@ public class FacultyHomeActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment  {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
+        adddelcourse obj;
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         final int PICKFILE_RESULT_CODE = 1;
@@ -156,8 +184,8 @@ public class FacultyHomeActivity extends AppCompatActivity {
             Button facultyInfoCaddButton = (Button)rootView.findViewById(R.id.faculty_info_cADD_button);
             Button facultyInfoCdeleteButton = (Button)rootView.findViewById(R.id.faculty_info_cDelete_button);
 
-            EditText facultyInfoCIDField = (EditText)rootView.findViewById(R.id.faculty_info_cID_field);
-            EditText facultyInfoCnameField = (EditText)rootView.findViewById(R.id.faculty_info_cname_field);
+            final EditText facultyInfoCIDField = (EditText)rootView.findViewById(R.id.faculty_info_cID_field);
+            final EditText facultyInfoCnameField = (EditText)rootView.findViewById(R.id.faculty_info_cname_field);
 
             if (facultyInfoCIDField.getText().toString() != null && facultyInfoCnameField.getText().toString() != null){
                 facultyInfoCaddButton.setEnabled(true);
@@ -171,6 +199,9 @@ public class FacultyHomeActivity extends AppCompatActivity {
             facultyInfoCaddButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                  obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),"159101086");
+
+                    obj.execute();
 
                 }
             });
@@ -178,6 +209,9 @@ public class FacultyHomeActivity extends AppCompatActivity {
             facultyInfoCdeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),"159101086");
+
+                    obj.execute();
 
                 }
             });
@@ -228,7 +262,13 @@ public class FacultyHomeActivity extends AppCompatActivity {
         public static void facultyEventsFragment(View rootView){
 
         }
+        public void processFinish(String result)
+        {
+
+        }
     }
+
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -265,6 +305,34 @@ public class FacultyHomeActivity extends AppCompatActivity {
             }
             return null;
         }
+
+    }
+    public void processFinish(String result)
+    {
+
+        Log.d("reached","process finish");
+        Log.d("string is",result);
+        try
+        {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_RESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String facultyid=c.getString(TAG_FacultyID);
+                String coursesid = c.getString(TAG_COURSEID);
+                String coursesname = c.getString(TAG_COURSENAME);
+                noofcourses += 1;
+                courseid[noofcourses-1]=coursesid;
+                coursename[noofcourses-1]=coursesname;
+                Toast.makeText(this,courseid[0]+coursename[0],Toast.LENGTH_LONG).show();
+            }
+        }
+        catch(Exception e)
+        {
+            Log.d("Error","Exception in json parsing"+e);
+
+        }
+
     }
 }
 
@@ -363,6 +431,188 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
 
     }
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+    }
+}
+
+
+
+class DataFetching extends AsyncTask<String, Void, String> {
+    Response delegate = null;
+    InputStream is = null;
+
+    String result = null;
+    String text = "";
+    Context c;
+    String id;
+    String user;
+    String password, receivedid, receivedpassword, receivedname, receiveddepartment, receivedsemester, receivedcourse;
+    StringBuilder sb = new StringBuilder();
+    String line = null;
+
+    DataFetching(String id) {
+        super();
+        this.id = id;
+    }
+
+    @Override
+    protected String doInBackground(String... arg0) {
+        try {
+            Log.d("checking", "reached do in background");
+            String link = "http://10.162.4.116/coursesfetching.php";
+            String data = URLEncoder.encode("id", "UTF-8")
+                    + "=" + URLEncoder.encode(id, "UTF-8");
+            Log.d("encoded", data);
+            URL url = new URL(link);
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+            wr.write(data);
+            wr.flush();
+            Log.d("checking", "success in writing");
+            BufferedReader reader = null;
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            text = sb.toString();
+            Log.d("checking", text);
+            wr.close();
+            reader.close();
+        } catch (Exception e) {
+            text = text + "Exception";
+            Log.d("checking", text+e);
+        }
+
+
+        return text;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+        Log.d("checking","text");
+        super.onPostExecute(result);
+        delegate.processFinish(result);
+    }
+
+    @Override
+    protected void onPreExecute() {
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+    }
+}
+interface Response {
+    void processFinish(String result);
+}
+interface AddDelResponse {
+    void processresult(String result);
+}
+
+
+class adddelcourse extends AsyncTask<String, Void, String> {
+    InputStream is = null;
+
+    String result = null;
+    String text = "";
+    Context c;
+    String id;
+    String name;
+    String work;
+    String facultyId;
+    String password,receivedid,receivedpassword,receivedname,receiveddepartment,receivedsemester,receivedcourse;
+    StringBuilder sb = new StringBuilder();
+    String line = null;
+    adddelcourse(String l,String id,String name,String facid) {
+        super();
+        this.work=l;
+        this.id=id;
+        this.name=name;
+        this.facultyId=facid;
+    }
+
+    @Override
+    protected String doInBackground(String... arg0) {
+        try {
+            Log.d("checking", "reached do in background"+work);String link="";
+            if(work.equals("add"))
+                link = "http://10.162.4.116/courses.php";
+            if(work.equals("del"))
+                link="http://10.162.4.116/deletecourses.php";
+            String data = URLEncoder.encode("courseId", "UTF-8")
+                    + "=" + URLEncoder.encode(id, "UTF-8");
+
+            data += "&" + URLEncoder.encode("courseName", "UTF-8") + "="
+                    + URLEncoder.encode(name, "UTF-8");
+            data += "&" + URLEncoder.encode("facultyId", "UTF-8") + "="
+                    + URLEncoder.encode(facultyId, "UTF-8");
+            Log.d("encoded", data);
+            URL url = new URL(link);
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+            wr.write(data);
+            wr.flush();
+            Log.d("checking", "success in writing");
+            BufferedReader reader = null;
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            text = sb.toString();
+            Log.d("checking", text);
+            wr.close();
+            reader.close();
+        } catch (Exception e) {
+            text = text + "Exception";
+            Log.d("checking", text);
+        }
+
+
+
+
+
+        return text;
+    }
+
+
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);String response="";
+            try {
+
+
+                JSONObject c = new JSONObject(result);
+                Log.d("problem not with", "object creation");
+                response = c.getString("response");
+            }
+            catch(Exception e) {
+                Log.d("Error","in adding courses"+e);
+            }
+            Log.d("Server Response",result);
+        }
+
+
 
     @Override
     protected void onPreExecute() {
