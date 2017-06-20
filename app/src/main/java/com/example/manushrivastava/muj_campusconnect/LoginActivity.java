@@ -84,24 +84,20 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
         }
         if(user.equals("Faculty")) {
-            Intent i = new Intent(this, FacultyHomeActivity.class);
-            startActivity(i);
+
             //code for sending to faculty home page
-            /*
-            if (user.equals("Student")) {
+
+            if (user.equals("Faculty")) {
 
                 if (receivedid.equals(loginid)) {
-                    Intent i = new Intent(this, UserHomeActivity.class);
-                    i.putExtra("id", receivedid);
-                    i.putExtra("name", receivedname);
-                    i.putExtra("department", receiveddepartment);
+                    Intent i = new Intent(this, FacultyHomeActivity.class);
                     startActivity(i);
                 } else if (receivedid.equals("no tuples"))
                     Toast.makeText(this, "Wrong id or password", Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(this, "Exception" + result, Toast.LENGTH_LONG).show();
 
-            }*/
+            }
         }
 
 

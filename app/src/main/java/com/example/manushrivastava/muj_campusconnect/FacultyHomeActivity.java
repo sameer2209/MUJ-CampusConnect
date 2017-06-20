@@ -43,16 +43,30 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class FacultyHomeActivity extends AppCompatActivity implements Response {
+public class FacultyHomeActivity extends AppCompatActivity implements Response,ServerResponse{
     DataFetching s;
     static int numberOfCourses=0;
     static String courseId[]=new String[10];
     static String courseName[]=new String[10];
+    IndivigilationDetails a;
+
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
     private static final String TAG_COURSENAME = "courseName";
     JSONArray peoples = null;
+
+
+    String examinfoarr[][]=new String[20][5];
+    int NoofDuty=0;
+    private static final String TAG_IRESULTS="result";
+    private static final String TAG_ICOURSEID = "courseId";
+    private static final String TAG_ICOURSENAME = "courseName";
+    private static final String TAG_DATE ="date";
+    private static final String TAG_TIME ="time";
+    private static final String TAG_VENUE ="venue";
+    JSONArray people = null;
+
 
 
     /**
@@ -94,7 +108,9 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
         s=new DataFetching("159101086");
         s.delegate=this;
         s.execute("");
-
+        a=new IndivigilationDetails("159101086","Prakash Ramani","Faculty");
+        a.delegate=this;
+        a.execute("");
     }
 
 
@@ -221,6 +237,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
 
             LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
 
+
             TextView coursesTextView[] = new TextView[numberOfCourses];
             for (int i = 0; i < numberOfCourses; i++){
                 coursesTextView[i] = new TextView(getContext());
@@ -266,10 +283,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
         public static void facultyEventsFragment(View rootView){
 
         }
-        public void processFinish(String result)
-        {
 
-        }
     }
 
 
@@ -325,10 +339,12 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
                 String facultyid=c.getString(TAG_FacultyID);
                 String coursesid = c.getString(TAG_COURSEID);
                 String coursesname = c.getString(TAG_COURSENAME);
+
                 numberOfCourses += 1;
                 courseId[numberOfCourses-1]=coursesid;
                 courseName[numberOfCourses-1]=coursesname;
                 //Toast.makeText(this,courseId[0]+courseName[0],Toast.LENGTH_LONG).show();
+
             }
         }
         catch(Exception e)
@@ -337,8 +353,42 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
 
         }
 
+
     }
+    public void ServerResponds(String result)
+    {
+        Log.d("reached","process finish");
+        Log.d("string is",result);
+        String str="";
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_IRESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String courseid = c.getString(TAG_ICOURSEID);
+                String coursename = c.getString(TAG_ICOURSENAME);
+                String date = c.getString(TAG_DATE);
+                String time = c.getString(TAG_TIME);
+                String venue = c.getString(TAG_VENUE);
+                NoofDuty+=1;
+                examinfoarr[i][0]=courseid;
+                examinfoarr[i][1]=coursename;
+                examinfoarr[i][2]=date;
+                examinfoarr[i][3]=time;
+                examinfoarr[i][4]=venue;
+
+                str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4];
+                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+            }
+
+        } catch (JSONException e) {
+            Log.d("Error","in json parsing");
+            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
+        }
+    }
+
 }
+
 
 class UploadFileAsync extends AsyncTask<String, Void, String> {
 
@@ -368,7 +418,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
             if (sourceFile.isFile()) {
 
                 try {
-                    String upLoadServerUri = "http://192.168.43.8/FileUpload.php";
+                    String upLoadServerUri = "http://10.162.4.116/FileUpload.php";
                     FileInputStream fileInputStream = new FileInputStream(sourceFile);
                     URL url = new URL(upLoadServerUri);
                     conn = (HttpURLConnection) url.openConnection();
@@ -418,6 +468,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
                     e.printStackTrace();
 
                 }
+
                 // dialog.dismiss();
 
             } // End else block
@@ -523,9 +574,6 @@ class DataFetching extends AsyncTask<String, Void, String> {
 interface Response {
     void processFinish(String result);
 }
-interface AddDelResponse {
-    void processresult(String result);
-}
 
 
 class adddelcourse extends AsyncTask<String, Void, String> {
@@ -551,6 +599,21 @@ class adddelcourse extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... arg0) {
+        try{
+            Log.d("check","trying to insert file dat");
+            String link = "http://10.162.4.116/fileread.php";
+            URL url = new URL(link);
+            URLConnection con = url.openConnection();
+            con.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.flush();
+            wr.close();
+        }
+        catch (Exception e)
+        {
+            Log.d("Exception","in fileread"+e);
+        }
+
         try {
             Log.d("checking", "reached do in background"+work);String link="";
             if(work.equals("add"))
