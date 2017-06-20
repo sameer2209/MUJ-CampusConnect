@@ -63,16 +63,19 @@ public class SignupActivity extends AppCompatActivity {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mStudentButton.isChecked())
+                if (mStudentButton.isChecked()){
                     user="Student";
-                else if (mFacultyButton.isChecked())
-                    user="Faculty";
-                s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
-                s.execute();
-                if (mStudentButton.isChecked())
+                    s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
+                    s.execute();
                     startStudentHomeActivity();
-                else if (mFacultyButton.isChecked())
+                }
+
+                else if (mFacultyButton.isChecked()){
+                    user="Faculty";
+                    s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
+                    s.execute();
                     startFacultyHomeActivity();
+                }
             }
         });
     }
@@ -132,7 +135,6 @@ public class SignupActivity extends AppCompatActivity {
         }
         if (!flag){
             Intent intent = new Intent(this, FacultyHomeActivity.class);
-            intent.putExtra(courses, 3);
             startActivity(intent);
         }
     }

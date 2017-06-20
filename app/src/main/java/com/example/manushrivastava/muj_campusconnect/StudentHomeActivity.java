@@ -1,8 +1,6 @@
 package com.example.manushrivastava.muj_campusconnect;
 
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -107,10 +105,53 @@ public class StudentHomeActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_student_home, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            View rootView;
+//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            switch (sectionNumber){
+                case 1: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
+                    studentInfoFragment(rootView);
+                    break;
+                case 2: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
+                    studentExamFragment(rootView);
+                    break;
+                case 3: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
+                    studentEventsFragment(rootView);
+                    break;
+                default: rootView = inflater.inflate(R.layout.fragment_faculty_home_info, container, false);
+            }
             return rootView;
+        }
+
+        public void studentInfoFragment(View rootView){
+
+            TextView studentInfoName = (TextView)rootView.findViewById(R.id.student_info_name_view);
+            studentInfoName.setText("Ravi Singh");
+
+            TextView studentInfoID = (TextView)rootView.findViewById(R.id.student_info_ID_view);
+            studentInfoID.setText("12345");
+
+            TextView studentInfoCourse = (TextView)rootView.findViewById(R.id.student_info_course_view);
+            studentInfoCourse.setText("BTech");
+
+            TextView studentInfoDept = (TextView)rootView.findViewById(R.id.student_info_dept_view);
+            studentInfoDept.setText("CSE");
+
+            TextView studentInfoSemester = (TextView)rootView.findViewById(R.id.student_info_semester_view);
+            studentInfoSemester.setText("4");
+
+            return;
+        }
+
+        public void studentExamFragment(View rootView){
+
+        }
+
+        public void studentEventsFragment(View rootView){
+
         }
     }
 

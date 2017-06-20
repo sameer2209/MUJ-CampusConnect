@@ -45,9 +45,9 @@ import java.net.URLEncoder;
 
 public class FacultyHomeActivity extends AppCompatActivity implements Response {
     DataFetching s;
-    int noofcourses=0;
-    String courseid[]=new String[20];
-    String coursename[]=new String[20];
+    static int numberOfCourses=0;
+    static String courseId[]=new String[10];
+    static String courseName[]=new String[10];
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
@@ -70,6 +70,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
      */
     private ViewPager mViewPager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +89,8 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        numberOfCourses = getIntent().getIntExtra(SignupActivity.courses, 0);
         s=new DataFetching("159101086");
         s.delegate=this;
         s.execute("");
@@ -217,12 +220,13 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
             });
 
             LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
-            int numberOfCourses = super.getArguments().getInt(SignupActivity.courses);// no. of courses returned from database
+
             TextView coursesTextView[] = new TextView[numberOfCourses];
-            for (int i = 1; i <= numberOfCourses; i++){
+            for (int i = 0; i < numberOfCourses; i++){
                 coursesTextView[i] = new TextView(getContext());
-                coursesTextView[i].setText("CSE1212 RDBMS"); //enter the course ID and course name returned from database
+                coursesTextView[i].setText(courseId[i] + "  " + courseName[i]); //enter the course ID and course name returned from database
                 coursesTextView[i].setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                coursesTextView[i].setTextSize(18.0f);
                 facultyInfoLayout.addView(coursesTextView[i]);
             }
 
@@ -321,10 +325,10 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response {
                 String facultyid=c.getString(TAG_FacultyID);
                 String coursesid = c.getString(TAG_COURSEID);
                 String coursesname = c.getString(TAG_COURSENAME);
-                noofcourses += 1;
-                courseid[noofcourses-1]=coursesid;
-                coursename[noofcourses-1]=coursesname;
-                Toast.makeText(this,courseid[0]+coursename[0],Toast.LENGTH_LONG).show();
+                numberOfCourses += 1;
+                courseId[numberOfCourses-1]=coursesid;
+                courseName[numberOfCourses-1]=coursesname;
+                //Toast.makeText(this,courseId[0]+courseName[0],Toast.LENGTH_LONG).show();
             }
         }
         catch(Exception e)
