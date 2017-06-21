@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +17,27 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class StudentHomeActivity extends AppCompatActivity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class StudentHomeActivity extends AppCompatActivity implements ServerResponse {
+
+
+    JSONArray peoples = null;
+    IndivigilationDetails a;
+    String examinfoarr[][]=new String[20][6];
+    int NoofDuty=0;
+    String id="",name="",semester="",department="",course="";
+    private static final String TAG_IRESULTS="result";
+    private static final String TAG_ICOURSEID = "courseId";
+    private static final String TAG_ICOURSENAME = "courseName";
+    private static final String TAG_DATE ="date";
+    private static final String TAG_TIME ="time";
+    private static final String TAG_VENUE ="venue";
+    private static final String TAG_INDIVIGILATOR ="indivigilator";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -36,6 +56,16 @@ public class StudentHomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle b=getIntent().getExtras();
+        id=b.getString("id");
+        name=b.getString("name");
+        department=b.getString("department");
+        semester=b.getString("semester");
+        course=b.getString("course");
+
+        a=new IndivigilationDetails(semester,department,"Student");
+        a.delegate=this;
+        a.execute("");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_home);
 
@@ -53,7 +83,38 @@ public class StudentHomeActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
     }
+    public void ServerResponds(String result)
+    {
+        Log.d("reached","process finish");
+        Log.d("string is",result);
+        String str="";
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_IRESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String courseid = c.getString(TAG_ICOURSEID);
+                String coursename = c.getString(TAG_ICOURSENAME);
+                String date = c.getString(TAG_DATE);
+                String time = c.getString(TAG_TIME);
+                String venue = c.getString(TAG_VENUE);
+                String indivigilator=c.getString(TAG_INDIVIGILATOR);
+                NoofDuty+=1;
+                examinfoarr[i][0]=courseid;
+                examinfoarr[i][1]=coursename;
+                examinfoarr[i][2]=date;
+                examinfoarr[i][3]=time;
+                examinfoarr[i][4]=venue;
+                examinfoarr[i][5]=indivigilator;
+                str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4]+" "+examinfoarr[i][5];
+                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+            }
 
+        } catch (JSONException e) {
+            Log.d("Error","in json parsing");
+            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

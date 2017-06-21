@@ -49,7 +49,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     static String courseId[]=new String[10];
     static String courseName[]=new String[10];
     IndivigilationDetails a;
-
+    String id="",name="",department="";
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
@@ -87,8 +87,55 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle b=getIntent().getExtras();
+        id=b.getString("id");
+        name=b.getString("name");
+        department=b.getString("department");
+        s=new DataFetching(id);
+        s.delegate=this;
+        s.execute("");
+        a=new IndivigilationDetails(id,name,"Faculty");
+        a.delegate=this;
+        a.execute("");
+
         super.onCreate(savedInstanceState);
+
+
+
+    }
+    public void processFinish(String result)
+    {
+
+        Log.d("reached","process finish");
+        Log.d("string is",result);
+        try
+        {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_RESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String facultyid=c.getString(TAG_FacultyID);
+                String coursesid = c.getString(TAG_COURSEID);
+                String coursesname = c.getString(TAG_COURSENAME);
+
+                numberOfCourses += 1;
+                courseId[numberOfCourses-1]=coursesid;
+                courseName[numberOfCourses-1]=coursesname;
+                //Toast.makeText(this,courseId[0]+courseName[0],Toast.LENGTH_LONG).show();
+                Log.d("checking",courseId[i]+" "+courseName[i]);
+            }
+        }
+        catch(Exception e)
+        {
+            Log.d("Error","Exception in json parsing"+e);
+
+        }
+
+
+
         setContentView(R.layout.activity_faculty_home);
+
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -104,13 +151,40 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        numberOfCourses = getIntent().getIntExtra(SignupActivity.courses, 0);
-        s=new DataFetching("159101086");
-        s.delegate=this;
-        s.execute("");
-        a=new IndivigilationDetails("159101086","Prakash Ramani","Faculty");
-        a.delegate=this;
-        a.execute("");
+
+
+
+    }
+    public void ServerResponds(String result)
+    {
+        Log.d("reached","process finish");
+        Log.d("string is",result);
+        String str="";
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_IRESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String courseid = c.getString(TAG_ICOURSEID);
+                String coursename = c.getString(TAG_ICOURSENAME);
+                String date = c.getString(TAG_DATE);
+                String time = c.getString(TAG_TIME);
+                String venue = c.getString(TAG_VENUE);
+                NoofDuty+=1;
+                examinfoarr[i][0]=courseid;
+                examinfoarr[i][1]=coursename;
+                examinfoarr[i][2]=date;
+                examinfoarr[i][3]=time;
+                examinfoarr[i][4]=venue;
+
+                str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4];
+                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+            }
+
+        } catch (JSONException e) {
+            Log.d("Error","in json parsing");
+            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -237,9 +311,12 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
             LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
 
-
+                Log.d("courses fragment","reaching here");
+            while(numberOfCourses==0){}
             TextView coursesTextView[] = new TextView[numberOfCourses];
+
             for (int i = 0; i < numberOfCourses; i++){
+                Log.d("checking",courseId[i]+" "+courseName[i]);
                 coursesTextView[i] = new TextView(getContext());
                 coursesTextView[i].setText(courseId[i] + "  " + courseName[i]); //enter the course ID and course name returned from database
                 coursesTextView[i].setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -325,67 +402,8 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         }
 
     }
-    public void processFinish(String result)
-    {
-
-        Log.d("reached","process finish");
-        Log.d("string is",result);
-        try
-        {
-            JSONObject jsonObj = new JSONObject(result);
-            peoples = jsonObj.getJSONArray(TAG_RESULTS);
-            for (int i = 0; i < peoples.length(); i++) {
-                JSONObject c = peoples.getJSONObject(i);
-                String facultyid=c.getString(TAG_FacultyID);
-                String coursesid = c.getString(TAG_COURSEID);
-                String coursesname = c.getString(TAG_COURSENAME);
-
-                numberOfCourses += 1;
-                courseId[numberOfCourses-1]=coursesid;
-                courseName[numberOfCourses-1]=coursesname;
-                //Toast.makeText(this,courseId[0]+courseName[0],Toast.LENGTH_LONG).show();
-
-            }
-        }
-        catch(Exception e)
-        {
-            Log.d("Error","Exception in json parsing"+e);
-
-        }
 
 
-    }
-    public void ServerResponds(String result)
-    {
-        Log.d("reached","process finish");
-        Log.d("string is",result);
-        String str="";
-        try {
-            JSONObject jsonObj = new JSONObject(result);
-            peoples = jsonObj.getJSONArray(TAG_IRESULTS);
-            for (int i = 0; i < peoples.length(); i++) {
-                JSONObject c = peoples.getJSONObject(i);
-                String courseid = c.getString(TAG_ICOURSEID);
-                String coursename = c.getString(TAG_ICOURSENAME);
-                String date = c.getString(TAG_DATE);
-                String time = c.getString(TAG_TIME);
-                String venue = c.getString(TAG_VENUE);
-                NoofDuty+=1;
-                examinfoarr[i][0]=courseid;
-                examinfoarr[i][1]=coursename;
-                examinfoarr[i][2]=date;
-                examinfoarr[i][3]=time;
-                examinfoarr[i][4]=venue;
-
-                str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4];
-                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
-            }
-
-        } catch (JSONException e) {
-            Log.d("Error","in json parsing");
-            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
-        }
-    }
 
 }
 
