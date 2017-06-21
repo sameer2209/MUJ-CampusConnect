@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -225,6 +226,10 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             Button studentExamTimeTableButton = (Button)rootView.findViewById(R.id.student_exam_view_timetable_button);
 
+            final EditText studentExamCourseField = (EditText)rootView.findViewById(R.id.student_exam_course_field);
+            final EditText studentExamDeptField = (EditText)rootView.findViewById(R.id.student_exam_dept_field);
+            final EditText studentExamSemesterField = (EditText)rootView.findViewById(R.id.student_exam_semester_field);
+
             int i = 0;
             while (examinfoarr[i][0] != null){
                 examSchedule = new ExamSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4], examinfoarr[i][5]);
@@ -235,7 +240,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             studentExamTimeTableButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    a=new IndivigilationDetails(semester,department,course,"Student");
+                    a=new IndivigilationDetails(studentExamSemesterField.getText().toString(),studentExamDeptField.getText().toString(),studentExamCourseField.getText().toString(),"Student");
                     StudentHomeActivity obj = new StudentHomeActivity();
                     a.delegate=obj;
                     a.execute("");
