@@ -81,6 +81,18 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
             else
                 Toast.makeText(this, "Exception" + result, Toast.LENGTH_LONG).show();
                 */
+            if (receivedid.equals(loginid)) {
+                Intent i = new Intent(this, StudentHomeActivity.class);
+                i.putExtra("id", receivedid);
+                i.putExtra("name", receivedname);
+                i.putExtra("department", receiveddepartment);
+                i.putExtra("semester", receivedsemester);
+                i.putExtra("course",receivedcourse);
+                startActivity(i);
+            } else if (receivedid.equals("no tuples"))
+                Toast.makeText(this, "Wrong id or password", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(this, "Exception" + result, Toast.LENGTH_LONG).show();
 
         }
         if(user.equals("Faculty")) {
@@ -91,6 +103,9 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
                 if (receivedid.equals(loginid)) {
                     Intent i = new Intent(this, FacultyHomeActivity.class);
+                    i.putExtra("id",receivedid);
+                    i.putExtra("name", receivedname);
+                    i.putExtra("department", receiveddepartment);
                     startActivity(i);
                 } else if (receivedid.equals("no tuples"))
                     Toast.makeText(this, "Wrong id or password", Toast.LENGTH_LONG).show();
@@ -129,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
         protected String doInBackground(String... arg0) {
             try {
                 Log.d("checking", "reached do in background");
-                String link = "http://192.168.43.220/TextUpload.php";
+                String link = "http://10.162.4.116/TextUpload.php";
                 String data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(id, "UTF-8");
 
@@ -161,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                 wr.close();
                 reader.close();
             } catch (Exception e) {
-                text = text + "Exception";
+                text = text + "Exception"+e;
                 Log.d("checking", text);
             }
 

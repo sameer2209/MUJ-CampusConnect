@@ -23,7 +23,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends AppCompatActivity implements RespondingOtp{
 
     EditText mName;
     EditText mID;
@@ -36,6 +36,7 @@ public class SignupActivity extends AppCompatActivity {
     RadioButton mFacultyButton;
 
     Button mSubmitButton;
+    OtpCreation v;
 
     static String courses = "";
     String user="";
@@ -65,15 +66,12 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mStudentButton.isChecked()){
                     user="Student";
-                    s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
-                    s.execute();
+
                     startStudentHomeActivity();
                 }
 
                 else if (mFacultyButton.isChecked()){
                     user="Faculty";
-                    s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
-                    s.execute();
                     startFacultyHomeActivity();
                 }
             }
@@ -107,6 +105,8 @@ public class SignupActivity extends AppCompatActivity {
             flag = true;
         }
         if (!flag){
+            s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
+            s.execute();
             Intent intent = new Intent(this, StudentHomeActivity.class);
             startActivity(intent);
         }
@@ -134,9 +134,27 @@ public class SignupActivity extends AppCompatActivity {
             flag = true;
         }
         if (!flag){
-            Intent intent = new Intent(this, FacultyHomeActivity.class);
-            startActivity(intent);
+            v=new OtpCreation(mEmail.getText().toString());
+            v.delegate=this;
+            v.execute("");
+
         }
+    }
+    public void ServerResponds(String result)
+    {
+
+            s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
+            s.execute();
+
+
+            Intent intent = new Intent(this, OtpVerification.class);
+            intent.putExtra("id",mID.getText().toString());
+            intent.putExtra("name",mName.getText().toString());
+        intent.putExtra("department",mDepartment.getText().toString());
+            startActivity(intent);
+
+
+
     }
 }
 
@@ -259,4 +277,83 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
     protected void onProgressUpdate(Void... values) {
     }
 }
+
+
+
+class OtpCreation extends AsyncTask<String, Void, String> {
+
+    RespondingOtp delegate = null;
+    String text = "",facultymailId,facultyName;
+    StringBuilder sb = new StringBuilder();
+    String line = null;
+    String type="";
+    OtpCreation(String i) {
+        super();
+
+        this.facultymailId = i;
+    }
+
+
+    @Override
+    protected String doInBackground(String... arg0) {
+        try {
+            Log.d("checking", "reached do in background for fetching indivigilation details");
+            String link = "http://10.162.4.116/SendMail.php";
+            String data = URLEncoder.encode("facultymailId", "UTF-8")
+                    + "=" + URLEncoder.encode(facultymailId, "UTF-8");
+            Log.d("encoded", data);
+            URL url = new URL(link);
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+            wr.write(data);
+            wr.flush();
+            Log.d("checking", "success in writing");
+            BufferedReader reader = null;
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+            text = sb.toString();
+            Log.d("checking", text);
+            wr.close();
+            reader.close();
+        } catch (Exception e) {
+            text = text + "Exception in sending mail";
+            Log.d("checking", text+e);
+        }
+
+
+
+
+
+        return text;
+
+
+    }
+    @Override
+    protected void onPostExecute(String result) {
+        super.onPostExecute(result);
+        delegate.ServerResponds(result);
+    }
+    @Override
+    protected void onPreExecute() {
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+    }
+
+}
+ interface RespondingOtp {
+    void ServerResponds(String result);
+}
+
+
 
