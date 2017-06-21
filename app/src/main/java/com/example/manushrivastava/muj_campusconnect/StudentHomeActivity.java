@@ -2,6 +2,9 @@ package com.example.manushrivastava.muj_campusconnect;
 
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +27,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class StudentHomeActivity extends AppCompatActivity implements ServerResponse {
 
 
     JSONArray peoples = null;
-    IndivigilationDetails a;
-    String examinfoarr[][]=new String[20][6];
+    static IndivigilationDetails a;
+    static String examinfoarr[][]=new String[20][6];
     int NoofDuty=0;
-    String id="",name="",semester="",department="",course="";
+    static String id="",name="",semester="",department="",course="";
     private static final String TAG_IRESULTS="result";
     private static final String TAG_ICOURSEID = "courseId";
     private static final String TAG_ICOURSENAME = "courseName";
@@ -63,7 +69,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         semester=b.getString("semester");
         course=b.getString("course");
 
-        a=new IndivigilationDetails(semester,department,"Student");
+        a=new IndivigilationDetails(semester,department,course,"Student");
         a.delegate=this;
         a.execute("");
         super.onCreate(savedInstanceState);
@@ -107,7 +113,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
                 examinfoarr[i][4]=venue;
                 examinfoarr[i][5]=indivigilator;
                 str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4]+" "+examinfoarr[i][5];
-                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+
             }
 
         } catch (JSONException e) {
@@ -168,15 +174,13 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
                                  Bundle savedInstanceState) {
 
             View rootView;
-//            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             switch (sectionNumber){
                 case 1: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
                     studentInfoFragment(rootView);
                     break;
-                case 2: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
+                case 2: rootView = inflater.inflate(R.layout.fragment_student_home_exam, container, false);
                     studentExamFragment(rootView);
                     break;
                 case 3: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
@@ -190,24 +194,54 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         public void studentInfoFragment(View rootView){
 
             TextView studentInfoName = (TextView)rootView.findViewById(R.id.student_info_name_view);
-            studentInfoName.setText("Ravi Singh");
+            studentInfoName.setText(name);
 
             TextView studentInfoID = (TextView)rootView.findViewById(R.id.student_info_ID_view);
-            studentInfoID.setText("12345");
+            studentInfoID.setText(id);
 
             TextView studentInfoCourse = (TextView)rootView.findViewById(R.id.student_info_course_view);
-            studentInfoCourse.setText("BTech");
+            studentInfoCourse.setText(course);
 
             TextView studentInfoDept = (TextView)rootView.findViewById(R.id.student_info_dept_view);
-            studentInfoDept.setText("CSE");
+            studentInfoDept.setText(department);
 
             TextView studentInfoSemester = (TextView)rootView.findViewById(R.id.student_info_semester_view);
-            studentInfoSemester.setText("4");
+            studentInfoSemester.setText(semester);
 
             return;
         }
 
-        public void studentExamFragment(View rootView){
+        public void studentExamFragment(final View rootView){
+            RecyclerView recyclerView;
+            ExamScheduleAdapter examScheduleAdapter;
+            ExamSchedule examSchedule;
+            ArrayList<ExamSchedule> examScheduleArrayList = new ArrayList<>();
+
+            recyclerView = (RecyclerView)rootView.findViewById(R.id.student_exam_recycler_view);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+            examScheduleAdapter = new ExamScheduleAdapter(examScheduleArrayList);
+            recyclerView.setAdapter(examScheduleAdapter);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            Button studentExamTimeTableButton = (Button)rootView.findViewById(R.id.student_exam_view_timetable_button);
+
+            int i = 0;
+            while (examinfoarr[i][0] != null){
+                examSchedule = new ExamSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4], examinfoarr[i][5]);
+                examScheduleArrayList.add(examSchedule);
+                i++;
+            }
+
+            studentExamTimeTableButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    a=new IndivigilationDetails(semester,department,course,"Student");
+                    StudentHomeActivity obj = new StudentHomeActivity();
+                    a.delegate=obj;
+                    a.execute("");
+                    studentExamFragment(rootView);
+                }
+            });
 
         }
 

@@ -10,10 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -46,7 +42,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_signup);
+        setContentView(R.layout.activity_signup);
 
         mName = (EditText)findViewById(R.id.signup_nameField);
         mID = (EditText)findViewById(R.id.signup_IDField);
@@ -66,7 +62,6 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             public void onClick(View v) {
                 if (mStudentButton.isChecked()){
                     user="Student";
-
                     startStudentHomeActivity();
                 }
 
@@ -85,7 +80,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             flag = true;
         }
         if (mID.getText().length() == 0) {
-            mID.setError("Invalid ID");
+            mID.setError("ID field is empty");
             flag = true;
         }
         if (mPassword.getText().length() < 4) {
@@ -105,9 +100,15 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             flag = true;
         }
         if (!flag){
+            Log.d("reaching","without errors");
             s = new SendingDataToServer(mName.getText().toString(),mID.getText().toString(),mCourse.getText().toString(),mDepartment.getText().toString(),mSemester.getText().toString(),mPassword.getText().toString(),user);
             s.execute();
             Intent intent = new Intent(this, StudentHomeActivity.class);
+            intent.putExtra("name", mName.getText().toString());
+            intent.putExtra("id", mID.getText().toString());
+            intent.putExtra("course", mCourse.getText().toString());
+            intent.putExtra("department", mDepartment.getText().toString());
+            intent.putExtra("semester", mSemester.getText().toString());
             startActivity(intent);
         }
     }
@@ -118,7 +119,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             flag = true;
         }
         if (mID.getText().length() == 0) {
-            mID.setError("Invalid ID");
+            mID.setError("ID field is required");
             flag = true;
         }
         if (!mEmail.getText().toString().contains("@jaipur.manipal.edu")) {
@@ -135,7 +136,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
         }
         if (!flag){
             v=new OtpCreation(mEmail.getText().toString());
-            v.delegate=this;
+            v.delegate = this;
             v.execute("");
 
         }

@@ -1,0 +1,72 @@
+package com.example.manushrivastava.muj_campusconnect;
+
+/**
+ * Created by sameer on 21/6/17.
+ */
+
+public class ExamSchedule {
+
+    String courseName;
+    String courseID;
+    String date;
+    String time;
+    String venue;
+    String invigilator;
+
+    public ExamSchedule(String courseName, String courseID, String date, String time, String venue, String invigilator) {
+        this.courseName = courseName;
+        this.courseID = courseID;
+        this.date = date;
+        this.time = time;
+        this.venue = venue;
+        this.invigilator = invigilator;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseID() {
+        return courseID;
+    }
+
+    public void setCourseID(String courseID) {
+        this.courseID = courseID;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setTime(String time){
+        this.time = time;
+    }
+
+    public String getTime(){
+        return time;
+    }
+
+    public String getVenue() {
+        return venue;
+    }
+
+    public void setVenue(String venue) {
+        this.venue = venue;
+    }
+
+    public String getInvigilator() {
+        return invigilator;
+    }
+
+    public void setInvigilator(String invigilator) {
+        this.invigilator = invigilator;
+    }
+}

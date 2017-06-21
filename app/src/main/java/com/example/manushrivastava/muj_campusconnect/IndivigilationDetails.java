@@ -28,16 +28,17 @@ import java.util.HashMap;
 public class IndivigilationDetails extends AsyncTask<String, Void, String> {
 
     ServerResponse delegate = null;
-    String text = "",facultyId,facultyName;
+    String text = "",facultyId,facultyName,course;
     StringBuilder sb = new StringBuilder();
     String line = null;
     String type="";
-    IndivigilationDetails(String i, String m,String type) {
+    IndivigilationDetails(String i, String m,String c,String type) {
         super();
 
         this.facultyId = i;
         this.facultyName = m;
         this.type=type;
+        this.course = c;
     }
 
 
@@ -51,6 +52,8 @@ public class IndivigilationDetails extends AsyncTask<String, Void, String> {
 
             data += "&" + URLEncoder.encode("facultyName", "UTF-8") + "="
                     + URLEncoder.encode(facultyName, "UTF-8");
+            data += "&" + URLEncoder.encode("course", "UTF-8") + "="
+                    + URLEncoder.encode(course, "UTF-8");
             data += "&" + URLEncoder.encode("type", "UTF-8") + "="
                     + URLEncoder.encode(type, "UTF-8");
             Log.d("encoded", data);

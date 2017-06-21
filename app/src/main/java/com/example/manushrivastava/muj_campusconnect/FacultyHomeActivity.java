@@ -49,7 +49,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     static String courseId[]=new String[10];
     static String courseName[]=new String[10];
     IndivigilationDetails a;
-    String id="",name="",department="";
+    static String id="",name="",department="";
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
@@ -94,7 +94,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         s=new DataFetching(id);
         s.delegate=this;
         s.execute("");
-        a=new IndivigilationDetails(id,name,"Faculty");
+        a=new IndivigilationDetails(id,name,"nocourse","Faculty");
         a.delegate=this;
         a.execute("");
 
@@ -266,13 +266,13 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         public void facultyInfoFragment(View rootView){
 
             TextView facultyInfoName = (TextView)rootView.findViewById(R.id.faculty_info_name_view);
-            facultyInfoName.setText("Ravi Singh");
+            facultyInfoName.setText(name);
 
             TextView facultyInfoID = (TextView)rootView.findViewById(R.id.faculty_info_ID_view);
-            facultyInfoID.setText("12345");
+            facultyInfoID.setText(id);
 
             TextView facultyInfoDept = (TextView)rootView.findViewById(R.id.faculty_info_dept_view);
-            facultyInfoDept.setText("CSE");
+            facultyInfoDept.setText(department);
 
             Button facultyInfoCaddButton = (Button)rootView.findViewById(R.id.faculty_info_cADD_button);
             Button facultyInfoCdeleteButton = (Button)rootView.findViewById(R.id.faculty_info_cDelete_button);
