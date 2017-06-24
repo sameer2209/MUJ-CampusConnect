@@ -43,22 +43,22 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class FacultyHomeActivity extends AppCompatActivity implements Response,ServerResponse{
+public class FacultyHomeActivity extends AppCompatActivity implements Response,ServerResponse,SubExamInterface{
     DataFetching s;
     static int numberOfCourses=0;
     static String courseId[]=new String[10];
     static String courseName[]=new String[10];
-    IndivigilationDetails a;
-    static String id="",name="",department="";
+    IndivigilationDetails a;SubExams t;
+    static String id="",name="",department="",type="";
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
     private static final String TAG_COURSENAME = "courseName";
     JSONArray peoples = null;
 
-
+    String courseexam[][]=new String[20][6];
     String examinfoarr[][]=new String[20][5];
-    int NoofDuty=0;
+    int NoofDuty=0;int numberOfExams=0;
     private static final String TAG_IRESULTS="result";
     private static final String TAG_ICOURSEID = "courseId";
     private static final String TAG_ICOURSENAME = "courseName";
@@ -91,13 +91,17 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         id=b.getString("id");
         name=b.getString("name");
         department=b.getString("department");
+        type=b.getString("entry");
+
         s=new DataFetching(id);
         s.delegate=this;
         s.execute("");
-        a=new IndivigilationDetails(id,name,"nocourse","Faculty");
+        a=new IndivigilationDetails(id,name,"nocourse","Faculty","none");
         a.delegate=this;
         a.execute("");
-
+        t=new SubExams(id,name,"nocourse","Faculty","exam");
+        t.delegate=this;
+        t.execute("");
         super.onCreate(savedInstanceState);
 
 
@@ -105,7 +109,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     }
     public void processFinish(String result)
     {
-
+        numberOfCourses=0;
         Log.d("reached","process finish");
         Log.d("string is",result);
         try
@@ -160,6 +164,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         Log.d("reached","process finish");
         Log.d("string is",result);
         String str="";
+
         try {
             JSONObject jsonObj = new JSONObject(result);
             peoples = jsonObj.getJSONArray(TAG_IRESULTS);
@@ -178,6 +183,39 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 examinfoarr[i][4]=venue;
 
                 str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4];
+                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+            }
+
+        } catch (JSONException e) {
+            Log.d("Error","in json parsing");
+            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
+        }
+    }
+    public void DataRetrieved(String result)
+    {
+        Log.d("reached","data retrieved");
+        Log.d("string is",result);
+        String str="";
+
+        try {
+            JSONObject jsonObj = new JSONObject(result);
+            peoples = jsonObj.getJSONArray(TAG_IRESULTS);
+            for (int i = 0; i < peoples.length(); i++) {
+                JSONObject c = peoples.getJSONObject(i);
+                String courseid = c.getString(TAG_ICOURSEID);
+                String coursename = c.getString(TAG_ICOURSENAME);
+                String date = c.getString(TAG_DATE);
+                String time = c.getString(TAG_TIME);
+                String venue = c.getString(TAG_VENUE);
+                String sem=c.getString("semester");
+               numberOfExams+=1;
+                courseexam[i][0]=courseid;
+                courseexam[i][1]=coursename;
+                courseexam[i][2]=date;
+                courseexam[i][3]=time;
+                courseexam[i][4]=venue;
+                courseexam[i][5]=sem;
+                str=courseexam[i][0]+" "+courseexam[i][1]+" "+courseexam[i][2]+" "+courseexam[i][3]+" "+courseexam[i][4]+courseexam[i][5];
                 Toast.makeText(this,str,Toast.LENGTH_LONG).show();
             }
 
@@ -292,7 +330,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             facultyInfoCaddButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),"159101086");
+                  obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
 
                     obj.execute();
 
@@ -302,7 +340,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             facultyInfoCdeleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),"159101086");
+                    obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
 
                     obj.execute();
 
@@ -312,7 +350,6 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
 
                 Log.d("courses fragment","reaching here");
-            while(numberOfCourses==0){}
             TextView coursesTextView[] = new TextView[numberOfCourses];
 
             for (int i = 0; i < numberOfCourses; i++){

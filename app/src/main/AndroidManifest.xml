@@ -34,6 +34,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"></activity>
         <activity android:name=".OtpVerification"></activity>
+        <service android:name=".ServiceforMatching" />
     </application>
 
 </manifest>

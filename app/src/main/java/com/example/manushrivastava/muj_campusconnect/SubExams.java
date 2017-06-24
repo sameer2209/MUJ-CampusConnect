@@ -1,4 +1,14 @@
 package com.example.manushrivastava.muj_campusconnect;
+
+import android.os.AsyncTask;
+import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Context;
@@ -25,15 +35,15 @@ import java.util.HashMap;
  * Created by admin on 6/20/2017.
  */
 
-public class IndivigilationDetails extends AsyncTask<String, Void, String> {
+public class SubExams extends AsyncTask<String, Void, String> {
 
-    ServerResponse delegate = null;
+    SubExamInterface delegate = null;
     String text = "",facultyId,facultyName,course;
     StringBuilder sb = new StringBuilder();
     String line = null;
     String type="";
     String details;
-    IndivigilationDetails(String i, String m,String c,String type,String r) {
+    SubExams(String i, String m,String c,String type,String r) {
         super();
         this.facultyId = i;
         this.facultyName = m;
@@ -98,7 +108,7 @@ public class IndivigilationDetails extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        delegate.ServerResponds(result);
+        delegate.DataRetrieved(result);
     }
     @Override
     protected void onPreExecute() {
@@ -109,5 +119,3 @@ public class IndivigilationDetails extends AsyncTask<String, Void, String> {
     }
 
 }
-
-

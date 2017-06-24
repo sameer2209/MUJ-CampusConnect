@@ -1,5 +1,9 @@
 package com.example.manushrivastava.muj_campusconnect;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -29,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class StudentHomeActivity extends AppCompatActivity implements ServerResponse {
 
@@ -36,8 +41,9 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
     JSONArray peoples = null;
     static IndivigilationDetails a;
     static String examinfoarr[][]=new String[20][6];
-    int NoofDuty=0;
-    static String id="",name="",semester="",department="",course="";
+    static int NoofDuty=0;
+    static int temp=0;
+    static String id="",name="",semester="",department="",course="",type;
     private static final String TAG_IRESULTS="result";
     private static final String TAG_ICOURSEID = "courseId";
     private static final String TAG_ICOURSENAME = "courseName";
@@ -69,29 +75,16 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         department=b.getString("department");
         semester=b.getString("semester");
         course=b.getString("course");
-
-        a=new IndivigilationDetails(semester,department,course,"Student");
+        type=b.getString("entry");
+        a=new IndivigilationDetails(semester,department,course,"Student","none");
         a.delegate=this;
         a.execute("");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
 
     }
     public void ServerResponds(String result)
-    {
+    {NoofDuty=0;
         Log.d("reached","process finish");
         Log.d("string is",result);
         String str="";
@@ -119,7 +112,51 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
 
         } catch (JSONException e) {
             Log.d("Error","in json parsing");
-            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
+        }
+            Log.d("arriving",temp+"no prob");
+        if(temp==0) {
+            temp = 1;
+            setContentView(R.layout.activity_student_home);
+
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            // Create the adapter that will return a fragment for each of the three
+            // primary sections of the activity.
+            mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+            // Set up the ViewPager with the sections adapter.
+            mViewPager = (ViewPager) findViewById(R.id.container);
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+
+            TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+            tabLayout.setupWithViewPager(mViewPager);
+
+
+            Intent serviceIntent = new Intent(this, ServiceforMatching.class);
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable("key_array_array", examinfoarr);
+            serviceIntent.putExtras(mBundle);
+            serviceIntent.putExtra("semester", semester);
+            serviceIntent.putExtra("course", course);
+            serviceIntent.putExtra("department", department);
+            this.startService(serviceIntent);
+
+
+            Calendar cal = Calendar.getInstance();
+            Intent intent = new Intent(this, ServiceforMatching.class);
+             mBundle = new Bundle();
+            mBundle.putSerializable("key_array_array", examinfoarr);
+            intent.putExtras(mBundle);
+            intent.putExtra("semester", semester);
+            intent.putExtra("course", course);
+            intent.putExtra("department", department);
+            PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+            Log.d("checking", "doing some work for repeating");
+            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            // Start service every hour
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                    1000, pintent);
+            Log.d("ending", "reching of making a service");
         }
     }
 
@@ -231,7 +268,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             final EditText studentExamSemesterField = (EditText)rootView.findViewById(R.id.student_exam_semester_field);
 
             int i = 0;
-            while (examinfoarr[i][0] != null){
+            while (examinfoarr[i][0] != null && NoofDuty!=0){
                 examSchedule = new ExamSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4], examinfoarr[i][5]);
                 examScheduleArrayList.add(examSchedule);
                 i++;
@@ -240,7 +277,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             studentExamTimeTableButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    a=new IndivigilationDetails(studentExamSemesterField.getText().toString(),studentExamDeptField.getText().toString(),studentExamCourseField.getText().toString(),"Student");
+                    a=new IndivigilationDetails(studentExamSemesterField.getText().toString(),studentExamDeptField.getText().toString(),studentExamCourseField.getText().toString(),"Student","none");
                     StudentHomeActivity obj = new StudentHomeActivity();
                     a.delegate=obj;
                     a.execute("");

@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                 i.putExtra("department", receiveddepartment);
                 i.putExtra("semester", receivedsemester);
                 i.putExtra("course",receivedcourse);
+                i.putExtra("entry ","Login");
                 startActivity(i);
             } else if (receivedid.equals("no tuples"))
                 Toast.makeText(this, "Wrong id or password", Toast.LENGTH_LONG).show();
@@ -106,6 +107,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                     i.putExtra("id",receivedid);
                     i.putExtra("name", receivedname);
                     i.putExtra("department", receiveddepartment);
+                    i.putExtra("entry","Login");
                     startActivity(i);
                 } else if (receivedid.equals("no tuples"))
                     Toast.makeText(this, "Wrong id or password", Toast.LENGTH_LONG).show();

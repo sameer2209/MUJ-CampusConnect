@@ -20,7 +20,7 @@ import java.net.URLEncoder;
 public class OtpVerification extends AppCompatActivity implements ServerRespone {
     EditText meditText;
     String otp;
-    String generatedotp="",mailid="",id="",name="",department="";
+    String generatedotp="",mailid="",id="",name="",department="",course="";
     GetOtp s;
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -55,6 +55,7 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
                     i.putExtra("id",id);
                     i.putExtra("name",name);
                     i.putExtra("department",department);
+                    i.putExtra("entry","Signup");
                     startActivity(i);
                 }
                 else
