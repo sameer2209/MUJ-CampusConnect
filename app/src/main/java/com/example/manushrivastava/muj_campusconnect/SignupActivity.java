@@ -109,6 +109,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             intent.putExtra("course", mCourse.getText().toString());
             intent.putExtra("department", mDepartment.getText().toString());
             intent.putExtra("semester", mSemester.getText().toString());
+            intent.putExtra("entry","Signup");
             startActivity(intent);
         }
     }
@@ -138,6 +139,11 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             v=new OtpCreation(mEmail.getText().toString());
             v.delegate = this;
             v.execute("");
+            Intent intent = new Intent(this, OtpVerification.class);
+            intent.putExtra("id",mID.getText().toString());
+            intent.putExtra("name",mName.getText().toString());
+            intent.putExtra("department",mDepartment.getText().toString());
+            startActivity(intent);
 
         }
     }
@@ -148,11 +154,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
             s.execute();
 
 
-            Intent intent = new Intent(this, OtpVerification.class);
-            intent.putExtra("id",mID.getText().toString());
-            intent.putExtra("name",mName.getText().toString());
-        intent.putExtra("department",mDepartment.getText().toString());
-            startActivity(intent);
+
 
 
 
