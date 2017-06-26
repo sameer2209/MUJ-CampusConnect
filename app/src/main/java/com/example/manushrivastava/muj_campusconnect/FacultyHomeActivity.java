@@ -384,6 +384,17 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 }
             });
 
+            Button uploadFacultyTimetableButton = (Button)rootView.findViewById(R.id.faculty_self_timetable_upload_button);
+            uploadFacultyTimetableButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.setType("*/*");
+                    startActivityForResult(intent,PICKFILE_RESULT_CODE);
+                }
+            });
+
             facultyInvigilationRecyclerView = (RecyclerView)rootView.findViewById(R.id.faculty_invigilation_recyclerView);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
             facultyInvigilationRecyclerView.setLayoutManager(layoutManager);
