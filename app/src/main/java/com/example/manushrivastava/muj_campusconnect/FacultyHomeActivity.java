@@ -6,7 +6,10 @@ import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -42,6 +45,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class FacultyHomeActivity extends AppCompatActivity implements Response,ServerResponse,SubExamInterface{
     DataFetching s;
@@ -57,8 +61,9 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     JSONArray peoples = null;
 
     String courseexam[][]=new String[20][6];
-    String examinfoarr[][]=new String[20][5];
+    static String examinfoarr[][]=new String[20][5];
     int NoofDuty=0;int numberOfExams=0;
+
     private static final String TAG_IRESULTS="result";
     private static final String TAG_ICOURSEID = "courseId";
     private static final String TAG_ICOURSENAME = "courseName";
@@ -331,9 +336,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 @Override
                 public void onClick(View v) {
                   obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
-
                     obj.execute();
-
                 }
             });
 
@@ -341,7 +344,6 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 @Override
                 public void onClick(View v) {
                     obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
-
                     obj.execute();
 
                 }
@@ -366,6 +368,11 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
         public void facultyExamFragment(View rootView){
 
+            RecyclerView facultyInvigilationRecyclerView;
+            InvigilationScheduleAdapter invigilationScheduleAdapter;
+            InvigilationSchedule invigilationSchedule;
+            ArrayList<InvigilationSchedule> invigilationScheduleArrayList = new ArrayList<>();
+
             Button uploadExamScheduleButton = (Button)rootView.findViewById(R.id.faculty_exam_upload_button);
             uploadExamScheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -376,6 +383,20 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                     startActivityForResult(intent,PICKFILE_RESULT_CODE);
                 }
             });
+
+            facultyInvigilationRecyclerView = (RecyclerView)rootView.findViewById(R.id.faculty_invigilation_recyclerView);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            facultyInvigilationRecyclerView.setLayoutManager(layoutManager);
+            invigilationScheduleAdapter = new InvigilationScheduleAdapter(invigilationScheduleArrayList);
+            facultyInvigilationRecyclerView.setAdapter(invigilationScheduleAdapter);
+            facultyInvigilationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            int i = 0;
+            while (examinfoarr[i][0] != null){
+                invigilationSchedule = new InvigilationSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4]);
+                invigilationScheduleArrayList.add(invigilationSchedule);
+                i++;
+            }
         }
 
         @Override
@@ -473,7 +494,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
             if (sourceFile.isFile()) {
 
                 try {
-                    String upLoadServerUri = "http://10.162.4.116/FileUpload.php";
+                    String upLoadServerUri = "http://@string/sameer_local_ip/FileUpload.php";
                     FileInputStream fileInputStream = new FileInputStream(sourceFile);
                     URL url = new URL(upLoadServerUri);
                     conn = (HttpURLConnection) url.openConnection();
@@ -575,7 +596,7 @@ class DataFetching extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background");
-            String link = "http://10.162.4.116/coursesfetching.php";
+            String link = "http://@string/sameer_local_ip/coursesfetching.php";
             String data = URLEncoder.encode("id", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
             Log.d("encoded", data);
@@ -656,7 +677,7 @@ class adddelcourse extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try{
             Log.d("check","trying to insert file dat");
-            String link = "http://10.162.4.116/fileread.php";
+            String link = "http://@string/sameer_local_ip/fileread.php";
             URL url = new URL(link);
             URLConnection con = url.openConnection();
             con.setDoOutput(true);
@@ -672,9 +693,9 @@ class adddelcourse extends AsyncTask<String, Void, String> {
         try {
             Log.d("checking", "reached do in background"+work);String link="";
             if(work.equals("add"))
-                link = "http://10.162.4.116/courses.php";
+                link = "http://@string/sameer_local_ip/courses.php";
             if(work.equals("del"))
-                link="http://10.162.4.116/deletecourses.php";
+                link="http://@string/sameer_local_ip/deletecourses.php";
             String data = URLEncoder.encode("courseId", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
 

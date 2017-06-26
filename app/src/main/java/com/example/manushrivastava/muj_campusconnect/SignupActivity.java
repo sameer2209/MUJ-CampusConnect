@@ -195,7 +195,7 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
             Log.d("checking", "reached do in background");
             Log.d("user","tnhzfh");
             if(work.equals("Student")) {
-                link = "http://10.162.4.116/signupstudent.php";
+                link = "http://@string/sameer_local_ip/signupstudent.php";
                 data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(ID, "UTF-8");
 
@@ -213,7 +213,7 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
                 if(work.equals("Faculty"))
                 {
                     Log.d("Checking","in faculty if");
-                    link = "http://10.162.4.116/signupfaculty.php";
+                    link = "http://@string/sameer_local_ip/signupfaculty.php";
                     Log.d("Checking","in faculty if link working");
                     data = URLEncoder.encode("id", "UTF-8")
                             + "=" + URLEncoder.encode(ID, "UTF-8");
@@ -301,7 +301,7 @@ class OtpCreation extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
-            String link = "http://10.162.4.116/SendMail.php";
+            String link = "http://192.168.43.220/SendMail.php";
             String data = URLEncoder.encode("facultymailId", "UTF-8")
                     + "=" + URLEncoder.encode(facultymailId, "UTF-8");
             Log.d("encoded", data);

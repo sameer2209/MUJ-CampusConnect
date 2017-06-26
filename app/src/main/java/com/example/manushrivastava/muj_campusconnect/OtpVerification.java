@@ -94,7 +94,7 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
-            String link = "http://10.162.4.116/otpverifying.php";
+            String link = "http://@string/sameer_local_ip/otpverifying.php";
             String data = URLEncoder.encode("otp", "UTF-8")
                     + "=" + URLEncoder.encode(otp, "UTF-8");
             Log.d("encoded", data);
