@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
         protected String doInBackground(String... arg0) {
             try {
                 Log.d("checking", "reached do in background");
-                String link = "http://10.162.1.193/TextUpload.php";
+                String link = "http://"+"10.162.4.116"+"/TextUpload.php";
                 String data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(id, "UTF-8");
 

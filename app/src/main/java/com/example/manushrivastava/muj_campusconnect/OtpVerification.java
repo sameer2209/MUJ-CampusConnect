@@ -1,6 +1,7 @@
 package com.example.manushrivastava.muj_campusconnect;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,8 +21,9 @@ import java.net.URLEncoder;
 public class OtpVerification extends AppCompatActivity implements ServerRespone {
     EditText meditText;
     String otp;
-    String generatedotp="",mailid="",id="",name="",department="",course="";
+    String generatedotp="",mailid="",id="",name="",department="",course="",password="";
     GetOtp s;
+    SendingDataToServer v;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -30,7 +32,7 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
         id=b.getString("id");
         name=b.getString("name");
         department=b.getString("department");
-
+        password=b.getString("password");
     }
     public void verifying(android.view.View v)
     {
@@ -51,6 +53,8 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
                 generatedotp= c.getString("response");
                 if(generatedotp.equals("Match"))
                 {
+                    v = new SendingDataToServer(name,id,"no course",department,"no semester",password,"Faculty");
+                    v.execute();
                     Intent i=new Intent(this,FacultyHomeActivity.class);
                     i.putExtra("id",id);
                     i.putExtra("name",name);
@@ -94,7 +98,9 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
-            String link = "http://@string/sameer_local_ip/otpverifying.php";
+
+            String link = "http://"+"10.162.4.116"+"/otpverifying.php";
+            Log.d("check",link);
             String data = URLEncoder.encode("otp", "UTF-8")
                     + "=" + URLEncoder.encode(otp, "UTF-8");
             Log.d("encoded", data);
@@ -150,6 +156,7 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
 interface ServerRespone {
     void ServerRespons(String result);
 }
+
 
 
 

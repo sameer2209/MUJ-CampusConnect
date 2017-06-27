@@ -63,7 +63,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
     static String courseexam[][]=new String[20][6];
     static String examinfoarr[][]=new String[20][5];
-    int NoofDuty=0;int numberOfExams=0;
+    static int NoofDuty=0;int numberOfExams=0;
 
     static RecyclerView facultyExamRecyclerView;
     static boolean isArrayListPopulated = false;
@@ -103,16 +103,18 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         name=b.getString("name");
         department=b.getString("department");
         type=b.getString("entry");
+        t=new SubExams(id,name,"nocourse","Faculty","exam");
+        t.delegate=this;
+        t.execute("");
+        a=new IndivigilationDetails(id,name,"nocourse","Faculty","none");
+        a.delegate=this;
+        a.execute("");
 
         s=new DataFetching(id);
         s.delegate=this;
         s.execute("");
-        a=new IndivigilationDetails(id,name,"nocourse","Faculty","none");
-        a.delegate=this;
-        a.execute("");
-        t=new SubExams(id,name,"nocourse","Faculty","exam");
-        t.delegate=this;
-        t.execute("");
+
+
         super.onCreate(savedInstanceState);
 
 
@@ -121,7 +123,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     public void processFinish(String result)
     {
         numberOfCourses=0;
-        Log.d("reached","process finish");
+        Log.d("reached","process finish of fetching courses teaching");
         Log.d("string is",result);
         try
         {
@@ -172,7 +174,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     }
     public void ServerResponds(String result)
     {
-        Log.d("reached","process finish");
+        Log.d("reached","process finish for indivigilation details");
         Log.d("string is",result);
         String str="";
 
@@ -204,7 +206,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     }
     public void DataRetrieved(String result)
     {
-        Log.d("reached","data retrieved");
+        Log.d("reached","data retrieved for course exam info");
         Log.d("string is",result);
         String str="";
 
@@ -368,7 +370,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 coursesTextView[i].setTextSize(18.0f);
                 facultyInfoLayout.addView(coursesTextView[i]);
             }
-
+            Log.d("check","done");
             return;
         }
 
@@ -398,6 +400,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
             facultyExamRecyclerView = (RecyclerView)rootView.findViewById(R.id.faculty_exam_recyclerView);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+
             facultyExamRecyclerView.setLayoutManager(layoutManager);
             facultyExamRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -454,6 +457,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                     isArrayListPopulated = true;
                 }
             });
+
 
         }
 
@@ -552,7 +556,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
             if (sourceFile.isFile()) {
 
                 try {
-                    String upLoadServerUri = "http://@string/sameer_local_ip/FileUpload.php";
+                    String upLoadServerUri = "http://"+"10.162.4.116"+"/FileUpload.php";
                     FileInputStream fileInputStream = new FileInputStream(sourceFile);
                     URL url = new URL(upLoadServerUri);
                     conn = (HttpURLConnection) url.openConnection();
@@ -654,7 +658,7 @@ class DataFetching extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background");
-            String link = "http://@string/sameer_local_ip/coursesfetching.php";
+            String link = "http://"+"10.162.4.116"+"/coursesfetching.php";
             String data = URLEncoder.encode("id", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
             Log.d("encoded", data);
@@ -733,27 +737,13 @@ class adddelcourse extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... arg0) {
-        try{
-            Log.d("check","trying to insert file dat");
-            String link = "http://@string/sameer_local_ip/fileread.php";
-            URL url = new URL(link);
-            URLConnection con = url.openConnection();
-            con.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-            wr.flush();
-            wr.close();
-        }
-        catch (Exception e)
-        {
-            Log.d("Exception","in fileread"+e);
-        }
 
         try {
             Log.d("checking", "reached do in background"+work);String link="";
             if(work.equals("add"))
-                link = "http://@string/sameer_local_ip/courses.php";
+                link = "http://"+"10.162.4.116"+"/courses.php";
             if(work.equals("del"))
-                link="http://@string/sameer_local_ip/deletecourses.php";
+                link="http://"+"10.162.4.116"+"/deletecourses.php";
             String data = URLEncoder.encode("courseId", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
 
@@ -786,7 +776,7 @@ class adddelcourse extends AsyncTask<String, Void, String> {
             reader.close();
         } catch (Exception e) {
             text = text + "Exception";
-            Log.d("checking", text);
+            Log.d("checking", text+e);
         }
 
 
