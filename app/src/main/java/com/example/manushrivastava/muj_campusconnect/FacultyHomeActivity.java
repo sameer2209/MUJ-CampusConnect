@@ -52,7 +52,8 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     static int numberOfCourses=0;
     static String courseId[]=new String[10];
     static String courseName[]=new String[10];
-    IndivigilationDetails a;SubExams t;
+    IndivigilationDetails a;
+    SubExams t;
     static String id="",name="",department="",type="";
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
@@ -60,9 +61,14 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     private static final String TAG_COURSENAME = "courseName";
     JSONArray peoples = null;
 
-    String courseexam[][]=new String[20][6];
+    static String courseexam[][]=new String[20][6];
     static String examinfoarr[][]=new String[20][5];
     int NoofDuty=0;int numberOfExams=0;
+
+    static RecyclerView facultyExamRecyclerView;
+    static boolean isArrayListPopulated = false;
+    static ArrayList<InvigilationSchedule> invigilationScheduleArrayList = new ArrayList<>();
+    static ArrayList<ExamSchedule> examScheduleArrayList = new ArrayList<>();
 
     private static final String TAG_IRESULTS="result";
     private static final String TAG_ICOURSEID = "courseId";
@@ -368,11 +374,6 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
 
         public void facultyExamFragment(View rootView){
 
-            RecyclerView facultyInvigilationRecyclerView;
-            InvigilationScheduleAdapter invigilationScheduleAdapter;
-            InvigilationSchedule invigilationSchedule;
-            ArrayList<InvigilationSchedule> invigilationScheduleArrayList = new ArrayList<>();
-
             Button uploadExamScheduleButton = (Button)rootView.findViewById(R.id.faculty_exam_upload_button);
             uploadExamScheduleButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -395,19 +396,65 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 }
             });
 
-            facultyInvigilationRecyclerView = (RecyclerView)rootView.findViewById(R.id.faculty_invigilation_recyclerView);
+            facultyExamRecyclerView = (RecyclerView)rootView.findViewById(R.id.faculty_exam_recyclerView);
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-            facultyInvigilationRecyclerView.setLayoutManager(layoutManager);
-            invigilationScheduleAdapter = new InvigilationScheduleAdapter(invigilationScheduleArrayList);
-            facultyInvigilationRecyclerView.setAdapter(invigilationScheduleAdapter);
-            facultyInvigilationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            facultyExamRecyclerView.setLayoutManager(layoutManager);
+            facultyExamRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-            int i = 0;
-            while (examinfoarr[i][0] != null){
-                invigilationSchedule = new InvigilationSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4]);
-                invigilationScheduleArrayList.add(invigilationSchedule);
-                i++;
-            }
+            Button viewInvigilationScheduleButton = (Button)rootView.findViewById(R.id.faculty_view_invigilation_schedule_button);
+            viewInvigilationScheduleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (isArrayListPopulated){
+                        invigilationScheduleArrayList.clear();
+                        examScheduleArrayList.clear();
+                    }
+
+                    InvigilationScheduleAdapter invigilationScheduleAdapter;
+                    InvigilationSchedule invigilationSchedule;
+
+                    invigilationScheduleAdapter = new InvigilationScheduleAdapter(invigilationScheduleArrayList);
+                    facultyExamRecyclerView.setAdapter(invigilationScheduleAdapter);
+
+                    int i = 0;
+                    while (examinfoarr[i][0] != null){
+                        invigilationSchedule = new InvigilationSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4]);
+                        invigilationScheduleArrayList.add(invigilationSchedule);
+                        i++;
+                    }
+
+                    isArrayListPopulated = true;
+                }
+            });
+
+            Button viewCourseScheduleButton = (Button)rootView.findViewById(R.id.faculty_view_course_schedule_button);
+            viewCourseScheduleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (isArrayListPopulated){
+                        examScheduleArrayList.clear();
+                        invigilationScheduleArrayList.clear();
+                    }
+                    ExamScheduleAdapter examScheduleAdapter;
+                    ExamSchedule examSchedule;
+
+
+                    examScheduleAdapter = new ExamScheduleAdapter(examScheduleArrayList);
+                    facultyExamRecyclerView.setAdapter(examScheduleAdapter);
+
+                    int i =0;
+                    while (courseexam[i][0] != null){
+                        examSchedule = new ExamSchedule(courseexam[i][1], courseexam[i][0], courseexam[i][2], courseexam[i][3], courseexam[i][4], courseexam[i][5]);
+                        examScheduleArrayList.add(examSchedule);
+                        i++;
+                    }
+
+                    isArrayListPopulated = true;
+                }
+            });
+
         }
 
         @Override

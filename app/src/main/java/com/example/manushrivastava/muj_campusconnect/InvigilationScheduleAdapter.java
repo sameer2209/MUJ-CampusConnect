@@ -26,11 +26,11 @@ public class InvigilationScheduleAdapter extends RecyclerView.Adapter<Invigilati
 
         public InvigilationViewHolder(View view){
             super(view);
-            courseName = (TextView)view.findViewById(R.id.exam_courseName);
-            courseID = (TextView)view.findViewById(R.id.exam_courseID);
-            date = (TextView)view.findViewById(R.id.exam_date);
-            time = (TextView)view.findViewById(R.id.exam_time);
-            venue = (TextView)view.findViewById(R.id.exam_venue);
+            courseName = (TextView)view.findViewById(R.id.faculty_exam_invigilation_courseName);
+            courseID = (TextView)view.findViewById(R.id.faculty_exam_invigilation_courseID);
+            date = (TextView)view.findViewById(R.id.faculty_exam_invigilation_date);
+            time = (TextView)view.findViewById(R.id.faculty_invigilation_time);
+            venue = (TextView)view.findViewById(R.id.faculty_exam_invigilation_venue);
         }
     }
 
