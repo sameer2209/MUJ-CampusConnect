@@ -314,7 +314,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             return rootView;
         }
 
-        public void facultyInfoFragment(View rootView){
+        public void facultyInfoFragment(final View rootView){
 
             TextView facultyInfoName = (TextView)rootView.findViewById(R.id.faculty_info_name_view);
             facultyInfoName.setText(name);
@@ -335,16 +335,13 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 facultyInfoCaddButton.setEnabled(true);
                 facultyInfoCdeleteButton.setEnabled(true);
             }
-            else{
-                facultyInfoCaddButton.setEnabled(false);
-                facultyInfoCdeleteButton.setEnabled(false);
-            }
 
             facultyInfoCaddButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                   obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
                     obj.execute();
+                    facultyInfoFragment(rootView);
                 }
             });
 
@@ -353,7 +350,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 public void onClick(View v) {
                     obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
                     obj.execute();
-
+                    facultyInfoFragment(rootView);
                 }
             });
 
@@ -421,7 +418,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                     facultyExamRecyclerView.setAdapter(invigilationScheduleAdapter);
 
                     int i = 0;
-                    while (examinfoarr[i][0] != null){
+                        while (examinfoarr[i][0] != null){
                         invigilationSchedule = new InvigilationSchedule(examinfoarr[i][1], examinfoarr[i][0], examinfoarr[i][2], examinfoarr[i][3], examinfoarr[i][4]);
                         invigilationScheduleArrayList.add(invigilationSchedule);
                         i++;

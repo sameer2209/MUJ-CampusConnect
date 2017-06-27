@@ -127,6 +127,62 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="To view a faculty's shcedule provide the below required details and click on the button"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/faculty_name_timetable_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="enter name"
+                android:inputType="textPersonName"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/faculty_dept_timetable_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="enter department"
+                android:inputType="textPersonName"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/faculty_timetable_day_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="enter day"
+                android:inputType="textPersonName"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/view_faculty_timetable_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:enabled="false"
+            android:text="View Faculty Schedule"
+            android:textSize="16sp" />
+
 
     </LinearLayout>
 

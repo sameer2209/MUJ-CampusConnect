@@ -229,7 +229,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             return rootView;
         }
 
-        public void studentInfoFragment(View rootView){
+        public void studentInfoFragment(final View rootView){
 
             TextView studentInfoName = (TextView)rootView.findViewById(R.id.student_info_name_view);
             studentInfoName.setText(name);
@@ -245,6 +245,32 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
 
             TextView studentInfoSemester = (TextView)rootView.findViewById(R.id.student_info_semester_view);
             studentInfoSemester.setText(semester);
+
+            EditText facultyName = (EditText)rootView.findViewById(R.id.faculty_name_timetable_field);
+            EditText facultyDepartment = (EditText)rootView.findViewById(R.id.faculty_dept_timetable_field);
+            EditText day = (EditText)rootView.findViewById(R.id.faculty_timetable_day_field);
+
+            Button viewFacultyScheduleButton = (Button)rootView.findViewById(R.id.view_faculty_timetable_button);
+
+            if (facultyName.getText().toString() != null && facultyDepartment.getText().toString() != null && day.getText().toString() != null){
+                viewFacultyScheduleButton.setEnabled(true);
+            }
+
+            viewFacultyScheduleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EditText facultyName = (EditText)rootView.findViewById(R.id.faculty_name_timetable_field);
+                    EditText department = (EditText)rootView.findViewById(R.id.faculty_dept_timetable_field);
+                    EditText day = (EditText)rootView.findViewById(R.id.faculty_timetable_day_field);
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString("facultyName", facultyName.getText().toString());
+                    bundle.putString("department", department.getText().toString());
+                    bundle.putString("day", day.getText().toString());
+                    FacultyScheduleFragmnet facultyScheduleFragmnet = new FacultyScheduleFragmnet();
+                    facultyScheduleFragmnet.setArguments(bundle);
+                }
+            });
 
             return;
         }
