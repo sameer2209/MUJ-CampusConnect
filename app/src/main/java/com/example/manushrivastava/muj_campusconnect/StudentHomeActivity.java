@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +70,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        temp=0;
         Bundle b=getIntent().getExtras();
         id=b.getString("id");
         name=b.getString("name");
@@ -80,7 +82,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         a.delegate=this;
         a.execute("");
         super.onCreate(savedInstanceState);
-
+        temp=0;
 
     }
     public void ServerResponds(String result)
@@ -113,8 +115,8 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         } catch (JSONException e) {
             Log.d("Error","in json parsing");
         }
-            Log.d("arriving",temp+"no prob");
         if(temp==0) {
+            Log.d("arriving", temp + "no prob");
             temp = 1;
             setContentView(R.layout.activity_student_home);
 
@@ -144,7 +146,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
 
             Calendar cal = Calendar.getInstance();
             Intent intent = new Intent(this, ServiceforMatching.class);
-             mBundle = new Bundle();
+            mBundle = new Bundle();
             mBundle.putSerializable("key_array_array", examinfoarr);
             intent.putExtras(mBundle);
             intent.putExtra("semester", semester);
@@ -158,6 +160,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
                     1000, pintent);
             Log.d("ending", "reching of making a service");
         }
+
     }
 
     @Override
@@ -185,12 +188,15 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements ScheduleFetch {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        String facultyScheduleArray[][]=new String[8][2];
+        int dataPresent=0;
+        TimeTableFetch time;
 
         public PlaceholderFragment() {
         }
@@ -263,12 +269,12 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
                     EditText department = (EditText)rootView.findViewById(R.id.faculty_dept_timetable_field);
                     EditText day = (EditText)rootView.findViewById(R.id.faculty_timetable_day_field);
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("facultyName", facultyName.getText().toString());
-                    bundle.putString("department", department.getText().toString());
-                    bundle.putString("day", day.getText().toString());
-                    FacultyScheduleFragmnet facultyScheduleFragmnet = new FacultyScheduleFragmnet();
-                    facultyScheduleFragmnet.setArguments(bundle);
+                    time=new TimeTableFetch(facultyName.getText().toString(),department.getText().toString(),day.getText().toString());
+                    PlaceholderFragment obj = new PlaceholderFragment();
+                    time.delegate=obj;
+                    time.execute("");
+
+
                 }
             });
 
@@ -314,6 +320,66 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         }
 
         public void studentEventsFragment(View rootView){
+
+        }
+        public void Retrieved(String result)
+        {
+            Log.d("checking","reaching in serverresponds interface function");
+            dataPresent=0;
+            try {
+
+
+                JSONObject c = new JSONObject(result);
+                Log.d("problem not with", "object creation");
+                String slotone = c.getString("one");
+                String slottwo = c.getString("two");
+                String slotthree = c.getString("three");
+                String slotfour = c.getString("four");
+                String slotfive = c.getString("five");
+                String slotsix = c.getString("six");
+                String slotseven = c.getString("seven");
+                String sloteight = c.getString("eight");
+                if(slotone.equals("no tuple"))
+                {
+                    dataPresent=0;
+
+                }
+                else
+                {
+
+                    dataPresent=1;
+                    facultyScheduleArray[0][0]="9:00 AM - 10:00 AM";
+                    facultyScheduleArray[0][1]=slotone;
+                    facultyScheduleArray[1][0]="10:00 AM - 11:00 AM";
+                    facultyScheduleArray[1][1]=slottwo;
+                    facultyScheduleArray[2][0]="11:00 AM - 12:00 PM";
+                    facultyScheduleArray[2][1]=slotthree;
+                    facultyScheduleArray[3][0]="12:00 PM - 1:00 PM";
+                    facultyScheduleArray[3][1]=slotfour;
+                    facultyScheduleArray[4][0]="1:00 PM - 2:00 PM";
+                    facultyScheduleArray[4][1]=slotfive;
+                    facultyScheduleArray[5][0]="2:00 PM - 3:00 PM";
+                    facultyScheduleArray[5][1]=slotsix;
+                    facultyScheduleArray[6][0]="3:00 PM - 4:00 PM";
+                    facultyScheduleArray[6][1]=slotseven;
+                    facultyScheduleArray[7][0]="4:00 PM - 5:00 PM";
+                    facultyScheduleArray[7][1]=sloteight;
+                    String str=facultyScheduleArray[0][0]+facultyScheduleArray[1]+facultyScheduleArray[2]+facultyScheduleArray[3];
+                    Log.d("result of ttable fetch ",str);
+                }
+            } catch (JSONException e) {
+                Log.d("Error", "Exception"+e);
+            }
+
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("key_array_array", facultyScheduleArray);
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_container);
+            if (fragment == null){
+                fragment = new FacultyScheduleFragmnet();
+            }
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
 
         }
     }
