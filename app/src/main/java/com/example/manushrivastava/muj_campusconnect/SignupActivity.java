@@ -33,7 +33,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
 
     Button mSubmitButton;
     OtpCreation v;
-
+    static String ip="null";
     static String courses = "";
     String user="";
 
@@ -43,7 +43,7 @@ public class SignupActivity extends AppCompatActivity implements RespondingOtp{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        ip=getBaseContext().getString(R.string.oct1);
         mName = (EditText)findViewById(R.id.signup_nameField);
         mID = (EditText)findViewById(R.id.signup_IDField);
         mEmail = (EditText)findViewById(R.id.signup_emailField);
@@ -178,7 +178,7 @@ class OtpCreation extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
-            String link = "http://"+"10.162.4.116"+"/SendMail.php";
+            String link = "http://"+SignupActivity.ip+"/SendMail.php";
             String data = URLEncoder.encode("facultymailId", "UTF-8")
                     + "=" + URLEncoder.encode(facultymailId, "UTF-8");
             Log.d("encoded", data);

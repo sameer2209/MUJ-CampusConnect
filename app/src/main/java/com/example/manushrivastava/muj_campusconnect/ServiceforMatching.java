@@ -53,6 +53,7 @@ public class ServiceforMatching extends Service implements ServerResponse{
     SQLiteDatabase db;
     String semester,course,department;
     String examinfoarr[][]=new String[20][6];
+    static String ip="null";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -63,6 +64,7 @@ public class ServiceforMatching extends Service implements ServerResponse{
     @Override
     public void onCreate() {
         create=new SqliteDatabase(getBaseContext());
+        ip=getBaseContext().getString(R.string.oct1);
         Toast.makeText(this, " Service for matching created ", Toast.LENGTH_LONG).show();
     }
 
@@ -73,7 +75,7 @@ public class ServiceforMatching extends Service implements ServerResponse{
          department = intent.getStringExtra("department");
         Object[] objectArray = (Object[]) intent.getExtras().getSerializable("key_array_array");
 
-        f=new IndivigilationDetails(semester,department,course,"Student","none");
+        f=new IndivigilationDetails(semester,department,course,"Student","none",ip);
         f.delegate=this;
         f.execute("");
         return mStartMode;

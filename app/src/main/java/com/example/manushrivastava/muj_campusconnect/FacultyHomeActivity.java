@@ -2,6 +2,8 @@ package com.example.manushrivastava.muj_campusconnect;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
@@ -54,7 +56,9 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     static String courseName[]=new String[10];
     IndivigilationDetails a;
     SubExams t;
+    static String ip;
     static String id="",name="",department="",type="";
+
     private static final String TAG_RESULTS="result";
     private static final String TAG_FacultyID = "facultyId";
     private static final String TAG_COURSEID = "courseId";
@@ -99,6 +103,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Bundle b=getIntent().getExtras();
+        ip=getBaseContext().getString(R.string.oct1);
         id=b.getString("id");
         name=b.getString("name");
         department=b.getString("department");
@@ -106,7 +111,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         t=new SubExams(id,name,"nocourse","Faculty","exam");
         t.delegate=this;
         t.execute("");
-        a=new IndivigilationDetails(id,name,"nocourse","Faculty","none");
+        a=new IndivigilationDetails(id,name,"nocourse","Faculty","none",ip);
         a.delegate=this;
         a.execute("");
 
@@ -272,7 +277,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         final int PICKFILE_RESULT_CODE = 1;
-        String FilePath="";
+        String FilePath1="";
         UploadFileAsync u;
 
         public PlaceholderFragment() {
@@ -379,7 +384,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                     intent.setType("*/*");
-                    startActivityForResult(intent,PICKFILE_RESULT_CODE);
+                    startActivityForResult(Intent.createChooser(intent,"select a file to upload"),PICKFILE_RESULT_CODE);
                 }
             });
 
@@ -463,10 +468,12 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             switch(requestCode){
                 case PICKFILE_RESULT_CODE:
                     if(resultCode==RESULT_OK){
-
-                        FilePath = data.getData().getPath();
-                        FilePath=FilePath.split(":")[1];
-                        u=new UploadFileAsync(FilePath);
+                        Uri uri=data.getData();
+                        FilePath1 = uri.getPath().toString();
+                        FilePath1=FilePath.getPath(getContext(),uri);
+                        Log.d("fileread",FilePath1);
+                       // FilePath=FilePath.split(":")[1];
+                        u=new UploadFileAsync(FilePath1);
                         u.execute("");
                     }
                     break;
@@ -537,7 +544,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
 
         try {
-            String sourceFileUri ="/sdcard/"+FilePath;
+            String sourceFileUri =FilePath; //"/sdcard/Download/schedule.xls";
 
             HttpURLConnection conn = null;
             DataOutputStream dos = null;
@@ -552,7 +559,7 @@ class UploadFileAsync extends AsyncTask<String, Void, String> {
             if (sourceFile.isFile()) {
 
                 try {
-                    String upLoadServerUri = "http://"+"10.162.4.116"+"/FileUpload.php";
+                    String upLoadServerUri = "http://"+FacultyHomeActivity.ip+"/fileread.php";
                     FileInputStream fileInputStream = new FileInputStream(sourceFile);
                     URL url = new URL(upLoadServerUri);
                     conn = (HttpURLConnection) url.openConnection();
@@ -654,7 +661,7 @@ class DataFetching extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background");
-            String link = "http://"+"10.162.4.116"+"/coursesfetching.php";
+            String link = "http://"+FacultyHomeActivity.ip+"/coursesfetching.php";
             String data = URLEncoder.encode("id", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
             Log.d("encoded", data);
@@ -737,9 +744,9 @@ class adddelcourse extends AsyncTask<String, Void, String> {
         try {
             Log.d("checking", "reached do in background"+work);String link="";
             if(work.equals("add"))
-                link = "http://"+"10.162.4.116"+"/courses.php";
+                link = "http://"+FacultyHomeActivity.ip+"/courses.php";
             if(work.equals("del"))
-                link="http://"+"10.162.4.116"+"/deletecourses.php";
+                link="http://"+FacultyHomeActivity.ip+"/deletecourses.php";
             String data = URLEncoder.encode("courseId", "UTF-8")
                     + "=" + URLEncoder.encode(id, "UTF-8");
 

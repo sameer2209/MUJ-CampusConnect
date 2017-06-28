@@ -24,11 +24,13 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
     String generatedotp="",mailid="",id="",name="",department="",course="",password="";
     GetOtp s;
     SendingDataToServer v;
+    static String ip="null";
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_verification);
         Bundle b=getIntent().getExtras();
+        ip=getBaseContext().getString(R.string.oct1);
         id=b.getString("id");
         name=b.getString("name");
         department=b.getString("department");
@@ -99,7 +101,7 @@ public class OtpVerification extends AppCompatActivity implements ServerRespone 
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
 
-            String link = "http://"+"10.162.4.116"+"/otpverifying.php";
+            String link = "http://"+OtpVerification.ip+"/otpverifying.php";
             Log.d("check",link);
             String data = URLEncoder.encode("otp", "UTF-8")
                     + "=" + URLEncoder.encode(otp, "UTF-8");

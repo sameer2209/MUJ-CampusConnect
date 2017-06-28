@@ -40,6 +40,7 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
         this.course = course;
         this.department = department;
         this.semester = semester;
+
     }
 
     @Override
@@ -49,7 +50,7 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
             Log.d("checking", "reached do in background");
             Log.d("user","tnhzfh");
             if(work.equals("Student")) {
-                link = "http://"+"10.162.4.116"+"/signupstudent.php";
+                link = "http://"+"192.168.43.220"+"/signupstudent.php";
                 data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(ID, "UTF-8");
 
@@ -67,7 +68,7 @@ class SendingDataToServer extends AsyncTask<String, Void, String> {
             if(work.equals("Faculty"))
             {
                 Log.d("Checking","in faculty if");
-                link = "http://"+R.string.sameer_local_ip+"/signupfaculty.php";
+                link = "http://"+LoginActivity.ip+"/signupfaculty.php";
                 Log.d("Checking","in faculty if link working");
                 data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(ID, "UTF-8");

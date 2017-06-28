@@ -5,7 +5,10 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_faculty_home">FacultyHomeActivity</string>
-    <string name="sameer_local_ip">10.162.4.116</string>
+    <string name="oct1" >192.168.43.220</string>
+    <string name="oct2" >168</string>
+    <string name="oct3" >43</string>
+    <string name="oct4" >220</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

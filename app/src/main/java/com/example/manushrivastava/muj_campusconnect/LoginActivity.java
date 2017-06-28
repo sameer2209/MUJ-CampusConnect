@@ -32,13 +32,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
     private RadioButton mradioButton;
     EditText meditText;
     String loginid,password,user;
-
+    static String ip;
     SignInActivity s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ip=this.getBaseContext().getString(R.string.oct1);
     }
 
     public void checking(android.view.View v) throws Exception {
@@ -146,7 +147,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
         protected String doInBackground(String... arg0) {
             try {
                 Log.d("checking", "reached do in background");
-                String link = "http://"+"10.162.4.116"+"/TextUpload.php";
+
+                String link = "http://"+LoginActivity.ip+"/TextUpload.php";
                 String data = URLEncoder.encode("id", "UTF-8")
                         + "=" + URLEncoder.encode(id, "UTF-8");
 

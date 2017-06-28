@@ -53,6 +53,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
     private static final String TAG_VENUE ="venue";
     private static final String TAG_INDIVIGILATOR ="indivigilator";
 
+    static  String ip="null";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -78,7 +79,8 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
         semester=b.getString("semester");
         course=b.getString("course");
         type=b.getString("entry");
-        a=new IndivigilationDetails(semester,department,course,"Student","none");
+        ip=getBaseContext().getString(R.string.oct1);
+        a=new IndivigilationDetails(semester,department,course,"Student","none",ip);
         a.delegate=this;
         a.execute("");
         super.onCreate(savedInstanceState);
@@ -157,7 +159,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             // Start service every hour
             alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                    1000, pintent);
+                    100000, pintent);
             Log.d("ending", "reching of making a service");
         }
 
@@ -309,7 +311,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             studentExamTimeTableButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    a=new IndivigilationDetails(studentExamSemesterField.getText().toString(),studentExamDeptField.getText().toString(),studentExamCourseField.getText().toString(),"Student","none");
+                    a=new IndivigilationDetails(studentExamSemesterField.getText().toString(),studentExamDeptField.getText().toString(),studentExamCourseField.getText().toString(),"Student","none",ip);
                     StudentHomeActivity obj = new StudentHomeActivity();
                     a.delegate=obj;
                     a.execute("");

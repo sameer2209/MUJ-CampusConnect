@@ -43,6 +43,7 @@ public class SubExams extends AsyncTask<String, Void, String> {
     String line = null;
     String type="";
     String details;
+    static String ip="null";
     SubExams(String i, String m,String c,String type,String r) {
         super();
         this.facultyId = i;
@@ -57,7 +58,7 @@ public class SubExams extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background for fetching indivigilation details");
-            String link = "http://"+"10.162.4.116"+"/Examfetching.php";
+            String link = "http://"+"192.168.43.220"+"/Examfetching.php";
             String data = URLEncoder.encode("facultyId", "UTF-8")
                     + "=" + URLEncoder.encode(facultyId, "UTF-8");
 

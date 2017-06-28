@@ -34,7 +34,7 @@ public class FacultyScheduleFragmnet extends Fragment {
     TimeTableFetch timetable;
     String facultyName,department,day;
     View view;
-
+    static String ip;
     public FacultyScheduleFragmnet() {
         // Required empty public constructor
         Log.d("position","in on create");
@@ -62,6 +62,7 @@ public class FacultyScheduleFragmnet extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.d("position","in on create view");
+        ip=getContext().getString(R.string.oct1);
         view = inflater.inflate(R.layout.fragment_faculty_schedule_fragmnet, container, false);
 
         facultyScheduleArray=(String[][])getArguments().getSerializable("key_array_array");
@@ -130,7 +131,7 @@ class TimeTableFetch extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... arg0) {
         try {
             Log.d("checking", "reached do in background");
-            String link = "http://"+"10.162.4.116"+"/TimeTablefetch.php";
+            String link = "http://"+FacultyScheduleFragmnet.ip+"/TimeTablefetch.php";
             String data = URLEncoder.encode("name", "UTF-8")
                     + "=" + URLEncoder.encode(facultyName, "UTF-8");
 
