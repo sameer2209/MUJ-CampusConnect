@@ -196,12 +196,11 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 examinfoarr[i][4]=venue;
 
                 str=examinfoarr[i][0]+" "+examinfoarr[i][1]+" "+examinfoarr[i][2]+" "+examinfoarr[i][3]+" "+examinfoarr[i][4];
-                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+
             }
 
         } catch (JSONException e) {
             Log.d("Error","in json parsing");
-            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
         }
     }
     public void DataRetrieved(String result)
@@ -229,12 +228,11 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 courseexam[i][4]=venue;
                 courseexam[i][5]=sem;
                 str=courseexam[i][0]+" "+courseexam[i][1]+" "+courseexam[i][2]+" "+courseexam[i][3]+" "+courseexam[i][4]+courseexam[i][5];
-                Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+
             }
 
         } catch (JSONException e) {
             Log.d("Error","in json parsing");
-            Toast.makeText(this,str+"Exception in json parsing"+e,Toast.LENGTH_LONG).show();
         }
     }
 
@@ -334,6 +332,7 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             if (facultyInfoCIDField.getText().toString() != null && facultyInfoCnameField.getText().toString() != null){
                 facultyInfoCaddButton.setEnabled(true);
                 facultyInfoCdeleteButton.setEnabled(true);
+                Log.d("check","enabling now");
             }
 
             facultyInfoCaddButton.setOnClickListener(new View.OnClickListener() {
