@@ -84,16 +84,12 @@ public class FacultyScheduleFragmnet extends Fragment {
         facultyScheduleRecyclerView.setAdapter(facultyScheduleAdapter);
 
         int i = 0;
-        while (facultyScheduleArray[i][0] != null&& dataPresent!=0){
-            facultySchedule = new FacultySchedule("9:00 AM - 10:00 AM", "Free");
+        while (facultyScheduleArray[i][0] != null && dataPresent!=0){
+            facultySchedule = new FacultySchedule(facultyScheduleArray[i][0], facultyScheduleArray[i][1]);
             facultyScheduleArrayList.add(facultySchedule);
             i++;
         }
         done=1;
-
-
-
-
 
         Log.d("check","coming out of locking while loop");
         return view;

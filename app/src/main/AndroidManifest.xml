@@ -23,18 +23,21 @@
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".SignupActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".StudentHomeActivity"
             android:label="@string/title_activity_student_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".FacultyHomeActivity"
             android:label="@string/title_activity_faculty_home"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"></activity>
-        <activity android:name=".OtpVerification"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".OtpVerification" />
+
         <service android:name=".ServiceforMatching" />
+
+        <activity android:name=".DisplayFacultySchedule"></activity>
     </application>
 
 </manifest>
