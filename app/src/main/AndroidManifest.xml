@@ -37,7 +37,8 @@
 
         <service android:name=".ServiceforMatching" />
 
-        <activity android:name=".DisplayFacultySchedule"></activity>
+        <activity android:name=".DisplayFacultySchedule" />
+        <activity android:name=".CreateEventActivity"></activity>
     </application>
 
 </manifest>

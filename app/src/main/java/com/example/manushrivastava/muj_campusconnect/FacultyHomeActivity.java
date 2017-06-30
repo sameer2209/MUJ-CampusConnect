@@ -334,6 +334,20 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
             final EditText facultyInfoCIDField = (EditText)rootView.findViewById(R.id.faculty_info_cID_field);
             final EditText facultyInfoCnameField = (EditText)rootView.findViewById(R.id.faculty_info_cname_field);
 
+            final LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
+
+            Log.d("courses fragment","reaching here");
+            final TextView coursesTextView[] = new TextView[numberOfCourses];
+
+            for (int i = 0; i < numberOfCourses; i++){
+                Log.d("checking",courseId[i]+" "+courseName[i]);
+                coursesTextView[i] = new TextView(getContext());
+                coursesTextView[i].setText(courseId[i] + "  " + courseName[i]); //enter the course ID and course name returned from database
+                coursesTextView[i].setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                coursesTextView[i].setTextSize(18.0f);
+                facultyInfoLayout.addView(coursesTextView[i]);
+            }
+
             if (facultyInfoCIDField.getText().toString() != null && facultyInfoCnameField.getText().toString() != null){
                 facultyInfoCaddButton.setEnabled(true);
                 facultyInfoCdeleteButton.setEnabled(true);
@@ -345,7 +359,12 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 public void onClick(View v) {
                   obj=  new adddelcourse("add",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
                     obj.execute();
-                    facultyInfoFragment(rootView);
+                    //facultyInfoFragment(rootView);
+                    TextView textView = new TextView(getContext());
+                    textView.setText(facultyInfoCIDField.getText().toString() + "  " + facultyInfoCnameField.getText().toString());
+                    textView.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    textView.setTextSize(18.0f);
+                    facultyInfoLayout.addView(textView);
                 }
             });
 
@@ -354,23 +373,16 @@ public class FacultyHomeActivity extends AppCompatActivity implements Response,S
                 public void onClick(View v) {
                     obj=  new adddelcourse("del",facultyInfoCIDField.getText().toString(),facultyInfoCnameField.getText().toString(),id);
                     obj.execute();
-                    facultyInfoFragment(rootView);
+                    //facultyInfoFragment(rootView);
+                    for (int i = 0; i < coursesTextView.length; i++){
+                        if (coursesTextView[i].getText().toString().equals(facultyInfoCIDField.getText().toString() + "  " + facultyInfoCnameField.getText().toString()));{
+                            facultyInfoLayout.removeViewAt(i);
+                        }
+                    }
                 }
             });
 
-            LinearLayout facultyInfoLayout = (LinearLayout)rootView.findViewById(R.id.faculty_info_layout);
 
-                Log.d("courses fragment","reaching here");
-            TextView coursesTextView[] = new TextView[numberOfCourses];
-
-            for (int i = 0; i < numberOfCourses; i++){
-                Log.d("checking",courseId[i]+" "+courseName[i]);
-                coursesTextView[i] = new TextView(getContext());
-                coursesTextView[i].setText(courseId[i] + "  " + courseName[i]); //enter the course ID and course name returned from database
-                coursesTextView[i].setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                coursesTextView[i].setTextSize(18.0f);
-                facultyInfoLayout.addView(coursesTextView[i]);
-            }
             Log.d("check","done");
             return;
         }

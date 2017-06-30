@@ -229,7 +229,7 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
                 case 2: rootView = inflater.inflate(R.layout.fragment_student_home_exam, container, false);
                     studentExamFragment(rootView);
                     break;
-                case 3: rootView = inflater.inflate(R.layout.fragment_student_home_info, container, false);
+                case 3: rootView = inflater.inflate(R.layout.fragment_student_home_event, container, false);
                     studentEventsFragment(rootView);
                     break;
                 default: rootView = inflater.inflate(R.layout.fragment_faculty_home_info, container, false);
@@ -323,6 +323,18 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
 
         public void studentEventsFragment(View rootView){
 
+            Button createEventButton = (Button)rootView.findViewById(R.id.student_create_event_button);
+            Button eventsListButton = (Button)rootView.findViewById(R.id.student_events_list_button);
+            Button eventsFollowingButton = (Button)rootView.findViewById(R.id.student_events_following_button);
+
+            createEventButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), CreateEventActivity.class);
+                    startActivity(intent);
+                }
+            });
+
         }
         public void Retrieved(String result)
         {
@@ -379,10 +391,9 @@ public class StudentHomeActivity extends AppCompatActivity implements ServerResp
             Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_container);
             if (fragment == null){
                 fragment = new FacultyScheduleFragmnet();
+                fragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
             }
-            fragment.setArguments(bundle);
-            getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
-
         }
     }
 
